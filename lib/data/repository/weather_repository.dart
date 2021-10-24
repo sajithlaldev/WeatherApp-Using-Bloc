@@ -6,7 +6,6 @@ import 'package:weather_app/data/models/weather.dart';
 class WeatherRepository {
   Future<Weather> getWeather(String city) async {
     var weatherJson = jsonDecode(await Api().getWeather(city));
-    return Weather(
-        city: weatherJson['name'], temp: weatherJson['main']['temp[']);
+    return Weather.fromJson(weatherJson);
   }
 }
