@@ -4,9 +4,13 @@ import 'package:rive/rive.dart';
 import 'package:weather_app/data/models/weather.dart';
 import 'package:weather_app/data/repository/weather_repository.dart';
 import 'package:weather_app/logic/blocs/weather_bloc.dart';
+import 'package:weather_app/logic/cubits/cubit/internet_cubit_cubit.dart';
 
 class HomeScreen extends StatelessWidget {
   final _cityController = TextEditingController();
+
+  bool isInternetAvailable = false;
+
   @override
   Widget build(BuildContext context) {
     final height =
@@ -27,6 +31,27 @@ class HomeScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              BlocBuilder<InternetCubitCubit, InternetCubitState>(
+                builder: (context, state) {
+                  if (state is Internetconnected) {
+                    return Container();
+                  } else if (state is InternetDisconnected) {
+                    return Container(
+                      width: width,
+                      height: height * 0.04,
+                      color: Colors.red,
+                      child: Center(
+                        child: Text(
+                          'Network not available',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    );
+                  } else {
+                    return LinearProgressIndicator();
+                  }
+                },
+              ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SizedBox(
@@ -62,29 +87,44 @@ class HomeScreen extends StatelessWidget {
                         SizedBox(
                           height: 10,
                         ),
-                        SizedBox(
-                          width: width - 20,
-                          height: 40,
-                          child: RaisedButton(
-                            color: Theme.of(context).primaryColor,
-                            onPressed: () {
-                              //adding Fetch Weather Event
-                              if (_cityController.text.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text('Enter city name!')));
-                              } else {
-                                BlocProvider.of<WeatherBloc>(context)
-                                    .add(FetchWeather(_cityController.text));
-                              }
-                            },
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Text(
-                              'Get Weather',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
+                        BlocBuilder<InternetCubitCubit, InternetCubitState>(
+                          builder: (context, state) {
+                            var c = false;
+                            if (state is Internetconnected) {
+                              c = true;
+                            } else {
+                              c = false;
+                            }
+
+                            return SizedBox(
+                              width: width - 20,
+                              height: 40,
+                              child: RaisedButton(
+                                color: Theme.of(context).primaryColor,
+                                onPressed: c
+                                    ? () {
+                                        //adding Fetch Weather Event
+                                        if (_cityController.text.isEmpty) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                                  content: Text(
+                                                      'Enter city name!')));
+                                        } else {
+                                          BlocProvider.of<WeatherBloc>(context)
+                                              .add(FetchWeather(
+                                                  _cityController.text));
+                                        }
+                                      }
+                                    : null,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Text(
+                                  'Get Weather',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            );
+                          },
                         )
                       ],
                     );
