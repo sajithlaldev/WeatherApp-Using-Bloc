@@ -78,6 +78,8 @@ class HomeScreen extends StatelessWidget {
                                     .add(FetchWeather(_cityController.text));
                               }
                             },
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
                             child: Text(
                               'Get Weather',
                               style: TextStyle(color: Colors.white),
@@ -92,7 +94,10 @@ class HomeScreen extends StatelessWidget {
                     );
                   } else if (state is WeatherLoading) {
                     return Center(
-                      child: CircularProgressIndicator(),
+                      child: SizedBox(
+                          height: 150,
+                          child:
+                              RiveAnimation.asset('assets/finger_tapping.riv')),
                     );
                   } else if (state is WeatherCityNotFound) {
                     return Center(
@@ -112,6 +117,8 @@ class HomeScreen extends StatelessWidget {
                                 BlocProvider.of<WeatherBloc>(context)
                                     .add(ResetWeather());
                               },
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
                               child: Text(
                                 'Retry',
                                 style: TextStyle(color: Colors.white),
@@ -148,6 +155,8 @@ class HomeScreen extends StatelessWidget {
                                 BlocProvider.of<WeatherBloc>(context)
                                     .add(ResetWeather());
                               },
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
                               child: Text(
                                 'Go Back',
                                 style: TextStyle(color: Colors.white),
