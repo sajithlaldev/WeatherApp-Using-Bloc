@@ -1,16 +1,11 @@
 # weather_app
 
-A new Flutter project.
+Weather App - Retrieve and display current weather situation of particular city that user enter as input
 
-## Getting Started
+- <b>This app is developed using Latest Bloc Pattern</b>
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+![Screenshot_1635072081](https://user-images.githubusercontent.com/28499651/138590365-ac63bc57-952b-406f-a52c-3c7dc2dc9ee1.png)
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+![Screenshot_1635072088](https://user-images.githubusercontent.com/28499651/138590376-1f277a55-aafd-439c-9b02-61f865d52702.png)
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
