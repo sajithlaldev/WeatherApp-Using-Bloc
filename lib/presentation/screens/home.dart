@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rive/rive.dart';
 import 'package:weather_app/data/models/weather.dart';
 import 'package:weather_app/data/repository/weather_repository.dart';
 import 'package:weather_app/logic/blocs/weather_bloc.dart';
@@ -28,9 +29,13 @@ class HomeScreen extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Image.network(
-                  'https://images-na.ssl-images-amazon.com/images/I/41wkG24yDkL.png',
-                  height: height * .2,
+                child: SizedBox(
+                  height: 300,
+                  width: width,
+                  child: RiveAnimation.asset(
+                    'assets/cloud.riv',
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               BlocConsumer<WeatherBloc, WeatherState>(
@@ -83,11 +88,38 @@ class HomeScreen extends StatelessWidget {
                     );
                   } else if (state is WeatherError) {
                     return Center(
-                      child: Text('Error'),
+                      child: Text('Internal Server Error'),
                     );
                   } else if (state is WeatherLoading) {
                     return Center(
                       child: CircularProgressIndicator(),
+                    );
+                  } else if (state is WeatherCityNotFound) {
+                    return Center(
+                      child: Column(
+                        children: [
+                          Text('Weather in ${state.getCity} not available'),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          SizedBox(
+                            width: width - 20,
+                            height: 40,
+                            child: RaisedButton(
+                              color: Theme.of(context).primaryColor,
+                              onPressed: () {
+                                //adding Fetch Weather Event
+                                BlocProvider.of<WeatherBloc>(context)
+                                    .add(ResetWeather());
+                              },
+                              child: Text(
+                                'Retry',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     );
                   } else {
                     Weather weather = (state as WeatherIsLoaded).weather;

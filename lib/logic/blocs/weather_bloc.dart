@@ -23,9 +23,7 @@ class FetchWeather extends WeatherEvent {
   List<Object?> get props => [city];
 }
 
-class ResetWeather extends WeatherEvent {
-
-}
+class ResetWeather extends WeatherEvent {}
 
 //defining weather states
 class WeatherState extends Equatable {
@@ -33,13 +31,24 @@ class WeatherState extends Equatable {
   List<Object?> get props => [];
 }
 
-
 //this will be the initial state
 
 class WeatherIsNotSearched extends WeatherState {}
 
 //loading state when the async task is running
 class WeatherLoading extends WeatherState {}
+
+class WeatherCityNotFound extends WeatherState {
+  String city;
+
+  String get getCity => this.city;
+
+  WeatherCityNotFound({required this.city});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [city];
+}
 
 //state when the api is finished executing and got the weather data
 class WeatherIsLoaded extends WeatherState {
@@ -72,7 +81,10 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
     try {
       //reading the whether data using the repository I have created
       final weather = await weatherRepository.getWeather(event.city);
-      emit(WeatherIsLoaded(weather: weather));
+      if (weather.city == "") {
+        emit(WeatherCityNotFound(city: event.city));
+      } else
+        emit(WeatherIsLoaded(weather: weather));
     } catch (_) {
       emit(WeatherError());
     }
