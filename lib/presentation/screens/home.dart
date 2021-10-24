@@ -1,62 +1,135 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_app/data/models/weather.dart';
+import 'package:weather_app/data/repository/weather_repository.dart';
+import 'package:weather_app/logic/blocs/weather_bloc.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreen extends StatelessWidget {
   final _cityController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final height =
         MediaQuery.of(context).size.height - AppBar().preferredSize.height;
     final width = MediaQuery.of(context).size.width;
+    final weatherRepository = WeatherRepository();
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Weather Today'),
       ),
-      body: Container(
-        height: height,
-        width: width,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.network(
-                'https://image.winudf.com/v2/image1/Y29tLm1hY3JvcGluY2guc3dhbl9pY29uXzE1NjY5OTYyOTFfMDM5/icon.png?w=&fakeurl=1',
-                height: height * .2,
-              ),
-            ),
-            Expanded(
-              child: Padding(
+      body: BlocProvider(
+        create: (_) => WeatherBloc(weatherRepository),
+        child: Container(
+          height: height,
+          width: width,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: _cityController,
-                  decoration: InputDecoration(
-                      labelText: 'Enter City',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15))),
+                child: Image.network(
+                  'https://images-na.ssl-images-amazon.com/images/I/41wkG24yDkL.png',
+                  height: height * .2,
                 ),
               ),
-            ),
-            SizedBox(
-              width: width,
-              child: RaisedButton(
-                color: Theme.of(context).primaryColor,
-                onPressed: () {},
-                child: Text(
-                  'Get Weather',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            )
-          ],
+              BlocConsumer<WeatherBloc, WeatherState>(
+                listener: (context, state) {
+                  // TODO: implement listener
+                },
+                builder: (context, state) {
+                  if (state is WeatherIsNotSearched) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            controller: _cityController,
+                            decoration: InputDecoration(
+                                isDense: true,
+                                labelText: 'Enter City',
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15))),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        SizedBox(
+                          width: width - 20,
+                          height: 40,
+                          child: RaisedButton(
+                            color: Theme.of(context).primaryColor,
+                            onPressed: () {
+                              //adding Fetch Weather Event
+                              if (_cityController.text.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text('Enter city name!')));
+                              } else {
+                                BlocProvider.of<WeatherBloc>(context)
+                                    .add(FetchWeather(_cityController.text));
+                              }
+                            },
+                            child: Text(
+                              'Get Weather',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        )
+                      ],
+                    );
+                  } else if (state is WeatherError) {
+                    return Center(
+                      child: Text('Error'),
+                    );
+                  } else if (state is WeatherLoading) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    Weather weather = (state as WeatherIsLoaded).weather;
+                    return Center(
+                      child: Column(
+                        children: [
+                          Text(
+                            '${weather.temp.toStringAsFixed(2)} C',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 26),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text('${weather.city}'),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          SizedBox(
+                            width: width - 20,
+                            height: 40,
+                            child: RaisedButton(
+                              color: Theme.of(context).primaryColor,
+                              onPressed: () {
+                                //adding Fetch Weather Event
+                                BlocProvider.of<WeatherBloc>(context)
+                                    .add(ResetWeather());
+                              },
+                              child: Text(
+                                'Go Back',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  }
+                },
+              )
+            ],
+          ),
         ),
       ),
     );
