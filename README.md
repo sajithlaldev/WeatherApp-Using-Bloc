@@ -1,4 +1,4 @@
-# weather_app
+# Weather App [Flutter Bloc]
 
 Weather App - Retrieve and display current weather situation of particular city that user enter as input
 
