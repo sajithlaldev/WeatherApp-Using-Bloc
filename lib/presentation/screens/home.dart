@@ -22,6 +22,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Weather Today'),
       ),
+      backgroundColor: Colors.white,
       body: BlocProvider(
         create: (_) => WeatherBloc(weatherRepository),
         child: Container(
@@ -55,7 +56,7 @@ class HomeScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SizedBox(
-                  height: 300,
+                  height: 250,
                   width: width,
                   child: RiveAnimation.asset(
                     'assets/cloud.riv',
@@ -63,10 +64,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              BlocConsumer<WeatherBloc, WeatherState>(
-                listener: (context, state) {
-                  // TODO: implement listener
-                },
+              BlocBuilder<WeatherBloc, WeatherState>(
                 builder: (context, state) {
                   if (state is WeatherIsNotSearched) {
                     return Column(
@@ -74,14 +72,22 @@ class HomeScreen extends StatelessWidget {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextField(
-                            controller: _cityController,
-                            decoration: InputDecoration(
-                                isDense: true,
-                                labelText: 'Enter City',
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15))),
+                          padding: const EdgeInsets.only(
+                              bottom: 8.0, right: 12, left: 12),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: TextField(
+                                controller: _cityController,
+                                decoration: InputDecoration(
+                                    fillColor: Colors.grey.shade100,
+                                    filled: true,
+                                    isDense: true,
+                                    labelText: 'Enter City',
+                                    border: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none)),
                           ),
                         ),
                         SizedBox(
@@ -176,7 +182,7 @@ class HomeScreen extends StatelessWidget {
                           Text(
                             '${weather.temp.toStringAsFixed(2)} C',
                             style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 26),
+                                fontWeight: FontWeight.bold, fontSize: 32),
                           ),
                           SizedBox(
                             height: 10,
