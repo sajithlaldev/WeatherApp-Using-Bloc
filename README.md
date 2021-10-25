@@ -3,6 +3,10 @@
 Weather App - Retrieve and display current weather situation of particular city that user enter as input
 
 - <b>This app is developed using Latest Bloc Pattern</b>
+- <b>Fetch weather from Weather API</b>
+- <b>Notify when Network is not available</b>
+
+
 
 
 First Screen         |  Second Screen
